@@ -1,0 +1,14 @@
+
+Robot Episode Stats:
+Total Episodes: 3
+Success Count: 2
+Success Rate: 66.67%
+Mean Reward: 30.0
+Max Reward: 40
+Min Reward: 20
+Sum Reward: 90
+
+Data Folder Stats:
+CSV files: 1
+JSON files: 1
+JPG files: 1
