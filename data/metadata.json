@@ -1,0 +1,6 @@
+{
+  "dataset_name": "sample_robot_episode_dataset",
+  "version": "v0.1",
+  "task_type": "robot_episode_evaluation",
+  "description": "A small sample dataset for practicing robot data analysis."
+}
