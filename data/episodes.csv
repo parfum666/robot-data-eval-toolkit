@@ -1,0 +1,6 @@
+episode_id,task,reward,success,steps
+1,pick_cube,8.5,1,42
+2,pick_cube,3.2,0,60
+3,open_drawer,7.1,1,55
+4,open_drawer,2.4,0,80
+5,push_button,9.0,1,35
