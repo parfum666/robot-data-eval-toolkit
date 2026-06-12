@@ -61,6 +61,40 @@
 11. 计算 average steps；
 12. 将 CSV 评测结果保存到 `results/csv_eval_report_v02.txt`，避免覆盖旧版本结果文件。
 
+## v0.3 Pandas Episode Evaluation
+
+In v0.3, this project adds Pandas-based robot episode evaluation.
+
+New features include:
+
+* Reading episode CSV data with `pd.read_csv()`
+* Previewing data with `df.head()`
+* Inspecting table shape and column names
+* Calculating average reward
+* Calculating success rate
+* Calculating average steps
+* Grouping metrics by task with `df.groupby("task")`
+* Filtering failed episodes
+* Counting failed episodes by task
+* Generating a Pandas evaluation report
+
+Main output:
+
+```text
+results/pandas_eval_report_v03.txt
+```
+
+Main scripts:
+
+```text
+scripts/pandas_read_csv_basic.py
+scripts/pandas_basic_stats.py
+scripts/pandas_groupby_task.py
+scripts/pandas_failed_episodes.py
+scripts/pandas_eval_report.py
+```
+
+
 ## 3. 项目结构
 
 ```text

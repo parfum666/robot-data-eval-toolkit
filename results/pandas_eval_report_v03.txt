@@ -1,0 +1,33 @@
+Pandas Robot Episode Evaluation Report v0.3
+================================================
+
+Overall Evaluation
+------------------------------------------------
+Total episode count: 5
+Average reward: 6.04
+Success rate: 0.6
+Average steps: 54.4
+
+Task-level Evaluation Report
+------------------------------------------------
+             episode_count  average_reward  success_rate  average_steps
+task                                                                   
+open_drawer              2            4.75           0.5           67.5
+pick_cube                2            5.85           0.5           51.0
+push_button              1            9.00           1.0           35.0
+
+Failed Episodes
+------------------------------------------------
+ episode_id        task  reward  success  steps
+          2   pick_cube     3.2        0     60
+          4 open_drawer     2.4        0     80
+
+Failure Summary
+------------------------------------------------
+Failed episode count: 2
+Failed rate: 0.4
+
+Failed Episode Count by Task
+------------------------------------------------
+pick_cube      1
+open_drawer    1
