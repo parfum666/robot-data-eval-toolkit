@@ -2,9 +2,9 @@
 
 这是一个面向 **具身智能算法实习生（数据闭环与评测方向）** 的长期学习型项目。
 
-当前版本是 **v0.4**。项目从 Python、NumPy、文件读写和 CSV 解析基础出发，逐步扩展到 Pandas 数据分析、机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测和自动化报告生成。
+当前版本是 **v0.5**。项目从 Python、NumPy、文件读写和 CSV 解析基础出发，逐步扩展到 Pandas 数据分析、机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测、数据可视化和自动化报告生成。
 
-本项目的目标不是一次性完成复杂系统，而是通过持续迭代，逐步构建一个能够展示机器人数据处理、评测分析、数据质量检查和数据闭环理解能力的 GitHub 项目。
+本项目的目标不是一次性完成复杂系统，而是通过持续迭代，逐步构建一个能够展示机器人数据处理、评测分析、数据质量检查、可视化分析和数据闭环理解能力的 GitHub 项目。
 
 ---
 
@@ -17,41 +17,39 @@
 * `reward`：任务奖励
 * `success`：任务是否成功
 * `steps` / `episode_length`：任务执行步数
-* `.csv`、`.json`、`.jpg`、`.txt` 等数据文件
+* `.csv`、`.json`、`.jpg`、`.txt`、`.png` 等数据文件
 
-对于具身智能算法的数据闭环与评测方向，除了训练模型本身，还需要对采集到的数据进行管理、清洗、统计、评测和回流。
+对于具身智能算法的数据闭环与评测方向，除了训练模型本身，还需要对采集到的数据进行管理、清洗、统计、评测、可视化和回流。
 
-本项目从一个简单版本开始，模拟机器人 episode 数据统计、数据文件夹扫描、Pandas 数据分析和数据质量检测流程，为后续学习数据闭环、评测系统、数据质量分析和自动化工具开发打基础。
+本项目从一个简单版本开始，模拟机器人 episode 数据统计、数据文件夹扫描、Pandas 数据分析、数据质量检测和可视化分析流程，为后续学习数据闭环、评测系统、数据质量分析和自动化工具开发打基础。
 
 ---
 
-## 2. 当前版本：v0.4 Data Quality Check
+## 2. 当前版本：v0.5 Data Visualization
 
-当前版本已经完成 **v0.4 数据质量检测阶段**。
+当前版本已经完成 **v0.5 数据可视化阶段**。
 
-在 v0.4 中，项目新增了基于 Pandas 的机器人 episode 数据质量检查功能，包括：
+在 v0.5 中，项目新增了基于 Pandas 和 Matplotlib 的机器人 episode 数据可视化功能，包括：
 
-* 检查必要字段是否存在；
-* 检查每一列缺失值数量；
-* 筛选存在缺失值的 episode；
-* 检查 `success` 标签是否合法；
-* 检查 `reward` 是否能转换为数字，是否超出合理范围；
-* 检查 `steps` 是否能转换为数字，是否超出合理范围，是否为整数；
-* 检查 `episode_id` 是否重复；
-* 检查 `episode_id` 是否连续；
-* 检查不同 `task` 的数据量是否过少或不均衡；
-* 自动生成数据质量检测报告。
+* 绘制每个 `task` 的 episode 数量柱状图；
+* 绘制所有 episode 的 reward 分布直方图；
+* 绘制每个 `task` 的 success rate 柱状图；
+* 绘制每个 `task` 的 average reward 柱状图；
+* 将所有图片自动保存到 `results/figures/` 文件夹。
 
-v0.4 的主输出文件为：
+v0.5 的最终整合脚本为：
 
 ```text
-results/data_quality_report_v04.txt
+scripts/pandas_visualization.py
 ```
 
-v0.4 的最终整合脚本为：
+v0.5 的输出图片包括：
 
 ```text
-scripts/pandas_quality_check.py
+results/figures/task_episode_count_v05.png
+results/figures/reward_distribution_v05.png
+results/figures/task_success_rate_v05.png
+results/figures/task_average_reward_v05.png
 ```
 
 ---
@@ -191,6 +189,60 @@ v0.4 进一步回答：
 
 ---
 
+### v0.5 Data Visualization
+
+v0.5 在 v0.4 的基础上，进一步加入数据可视化功能。
+
+v0.4 主要回答：
+
+```text
+数据有没有缺失、异常、不连续、不均衡？
+```
+
+v0.5 进一步回答：
+
+```text
+这些数据问题和评测结果能不能用图更直观地展示出来？
+```
+
+已实现内容包括：
+
+1. 绘制 task episode 数量柱状图：
+
+   * 使用 `df["task"].value_counts()` 统计每个 task 的 episode 数量；
+   * 使用 `plt.bar()` 绘制柱状图；
+   * 输出到 `results/figures/task_episode_count_v05.png`。
+
+2. 绘制 reward 分布直方图：
+
+   * 使用 `pd.to_numeric()` 将 reward 转换为数字；
+   * 使用 `dropna()` 去除无效 reward；
+   * 使用 `plt.hist()` 绘制 reward 分布；
+   * 输出到 `results/figures/reward_distribution_v05.png`。
+
+3. 绘制 task success rate 柱状图：
+
+   * 使用 `pd.to_numeric()` 清洗 success；
+   * 使用 `groupby("task")["success"].mean()` 计算每个 task 的成功率；
+   * 使用 `plt.bar()` 绘制每个 task 的 success rate；
+   * 输出到 `results/figures/task_success_rate_v05.png`。
+
+4. 绘制 task average reward 柱状图：
+
+   * 使用 `pd.to_numeric()` 清洗 reward；
+   * 使用 `groupby("task")["reward"].mean()` 计算每个 task 的平均 reward；
+   * 使用 `plt.bar()` 绘制每个 task 的 average reward；
+   * 输出到 `results/figures/task_average_reward_v05.png`。
+
+5. 使用函数组织可视化代码：
+
+   * `plot_task_episode_count(df)`
+   * `plot_reward_distribution(df)`
+   * `plot_task_success_rate(df)`
+   * `plot_task_average_reward(df)`
+
+---
+
 ## 4. 项目结构
 
 ```text
@@ -210,16 +262,23 @@ robot-data-eval-toolkit/
 │   ├── pandas_groupby_task.py
 │   ├── pandas_failed_episodes.py
 │   ├── pandas_eval_report.py
-│   └── pandas_quality_check.py
+│   ├── pandas_quality_check.py
+│   └── pandas_visualization.py
 ├── results/
 │   ├── result.txt
 │   ├── csv_eval_report_v02.txt
 │   ├── pandas_eval_report_v03.txt
-│   └── data_quality_report_v04.txt
+│   ├── data_quality_report_v04.txt
+│   └── figures/
+│       ├── task_episode_count_v05.png
+│       ├── reward_distribution_v05.png
+│       ├── task_success_rate_v05.png
+│       └── task_average_reward_v05.png
 ├── learning_notes/
 │   ├── csv_basic.md
 │   ├── pandas_basic.md
-│   └── pandas_quality_check.md
+│   ├── pandas_quality_check.md
+│   └── pandas_visualization.md
 ├── docs/
 │   └── roadmap.md
 ├── requirements.txt
@@ -237,10 +296,18 @@ robot-data-eval-toolkit/
 pip install -r requirements.txt
 ```
 
+`requirements.txt` 当前至少需要包含：
+
+```text
+numpy
+pandas
+matplotlib
+```
+
 如果当前电脑的 `python` 环境不是 Anaconda，也可以使用指定 Python 解释器运行，例如：
 
 ```bash
-D:\anaconda\python.exe scripts\pandas_quality_check.py
+D:\anaconda\python.exe scripts\pandas_visualization.py
 ```
 
 ---
@@ -297,6 +364,23 @@ python scripts/pandas_quality_check.py
 
 ```text
 results/data_quality_report_v04.txt
+```
+
+---
+
+### 5.6 运行 v0.5 数据可视化脚本
+
+```bash
+python scripts/pandas_visualization.py
+```
+
+运行后查看：
+
+```text
+results/figures/task_episode_count_v05.png
+results/figures/reward_distribution_v05.png
+results/figures/task_success_rate_v05.png
+results/figures/task_average_reward_v05.png
 ```
 
 ---
@@ -377,22 +461,6 @@ task
 open_drawer              2            4.75           0.5           67.5
 pick_cube                2            5.85           0.5           51.0
 push_button              1            9.00           1.0           35.0
-
-Failed Episodes
-------------------------------------------------
- episode_id        task  reward  success  steps
-          2   pick_cube     3.2        0     60
-          4 open_drawer     2.4        0     80
-
-Failure Summary
-------------------------------------------------
-Failed episode count: 2
-Failed rate: 0.4
-
-Failed Episode Count by Task
-------------------------------------------------
-pick_cube      1
-open_drawer    1
 ```
 
 ---
@@ -415,17 +483,6 @@ reward        0
 success       0
 steps         0
 
-Missing Value Check Summary
-------------------------------------------------
-Total episode count: 5
-Episodes with missing values: 0
-Missing episode rate: 0.0
-
-Success Label Check Summary
-------------------------------------------------
-Invalid success label count: 0
-Invalid success label rate: 0.0
-
 Reward Check Summary
 ------------------------------------------------
 Reward valid range: [0, 100]
@@ -438,50 +495,79 @@ Steps valid range: [1, 1000]
 Invalid steps count: 0
 Invalid steps rate: 0.0
 
-Episode ID Duplicate Check Summary
-------------------------------------------------
-Duplicated episode_id row count: 0
-
-Episode ID Continuity Check Summary
-------------------------------------------------
-Unique episode_id count: 5
-Missing episode_id count: 0
-
 Task Episode Count
 ------------------------------------------------
 pick_cube      2
 open_drawer    2
 push_button    1
+```
 
-Task Balance Check Summary
-------------------------------------------------
-Minimum task count: 1
-Maximum task count: 2
-Task imbalance ratio: 2.0
-Task minimum count threshold: 2
-Task imbalance ratio threshold: 3.0
+---
+
+### v0.5 示例输出
+
+v0.5 会自动生成 4 张图片：
+
+```text
+results/figures/task_episode_count_v05.png
+results/figures/reward_distribution_v05.png
+results/figures/task_success_rate_v05.png
+results/figures/task_average_reward_v05.png
+```
+
+终端输出示例：
+
+```text
+Task Episode Count
+--------------------------------
+pick_cube      2
+open_drawer    2
+push_button    1
+
+Reward Summary
+--------------------------------
+count    5.000000
+mean     6.040000
+min      2.400000
+max      9.000000
+
+Task Success Rate
+--------------------------------
+open_drawer    0.5
+pick_cube      0.5
+push_button    1.0
+
+Task Average Reward
+--------------------------------
+open_drawer    4.75
+pick_cube      5.85
+push_button    9.00
+
+All v0.5 figures have been generated successfully.
 ```
 
 ---
 
 ## 8. 与目标岗位的对应关系
 
-| 岗位要求      | 当前项目体现                                            |
-| --------- | ------------------------------------------------- |
-| 熟悉 Python | 使用 Python 编写 episode 数据分析和质量检测脚本                  |
-| 熟悉 NumPy  | 使用 NumPy 计算 reward 的基础统计指标                        |
-| 熟悉 Pandas | 使用 Pandas 读取 CSV、统计指标、筛选异常数据                      |
-| 熟悉数据处理    | 从 CSV 文件中读取并解析 episode 数据                         |
-| 熟悉数据管理    | 遍历 data 文件夹并统计不同类型的数据文件                           |
-| 评测指标设计与实现 | 计算 average reward、success rate、average steps      |
-| 任务级评测分析   | 使用 `groupby("task")` 分析不同任务表现                     |
-| 失败数据分析    | 筛选 `success == 0` 的失败 episode                     |
-| 数据质量检测    | 检查缺失值、异常 reward、异常 steps、非法 success 标签            |
-| 数据一致性检查   | 检查 episode_id 是否重复、是否连续                           |
-| 数据分布分析    | 检查不同 task 的 episode 数量是否均衡                        |
-| 数据闭环理解    | 从整体指标进一步定位失败任务和脏数据，为后续数据回流做准备                     |
-| 自动化评测工具开发 | 自动生成 txt 格式评测报告和数据质量检测报告                          |
-| 良好的工程意识   | 区分 data、scripts、results、learning_notes、docs 等项目目录 |
+| 岗位要求          | 当前项目体现                                                    |
+| ------------- | --------------------------------------------------------- |
+| 熟悉 Python     | 使用 Python 编写 episode 数据分析、质量检测和可视化脚本                      |
+| 熟悉 NumPy      | 使用 NumPy 计算 reward 的基础统计指标                                |
+| 熟悉 Pandas     | 使用 Pandas 读取 CSV、统计指标、筛选异常数据、分组分析                         |
+| 熟悉 Matplotlib | 使用 Matplotlib 绘制柱状图和直方图                                   |
+| 熟悉数据处理        | 从 CSV 文件中读取并解析 episode 数据                                 |
+| 熟悉数据管理        | 遍历 data 文件夹并统计不同类型的数据文件                                   |
+| 评测指标设计与实现     | 计算 average reward、success rate、average steps              |
+| 任务级评测分析       | 使用 `groupby("task")` 分析不同任务表现                             |
+| 失败数据分析        | 筛选 `success == 0` 的失败 episode                             |
+| 数据质量检测        | 检查缺失值、异常 reward、异常 steps、非法 success 标签                    |
+| 数据一致性检查       | 检查 episode_id 是否重复、是否连续                                   |
+| 数据分布分析        | 检查不同 task 的 episode 数量是否均衡                                |
+| 可视化分析         | 绘制 task 数量、reward 分布、success rate、average reward 图        |
+| 数据闭环理解        | 从整体指标进一步定位失败任务、脏数据和低表现任务，为后续数据回流做准备                       |
+| 自动化评测工具开发     | 自动生成 txt 格式评测报告、数据质量报告和可视化图片                              |
+| 良好的工程意识       | 区分 data、scripts、results、figures、learning_notes、docs 等项目目录 |
 
 ---
 
@@ -514,28 +600,23 @@ Task imbalance ratio threshold: 3.0
 23. episode_id 重复检查；
 24. episode_id 连续性检查；
 25. task 数据量均衡检查；
-26. 自动生成 v0.4 数据质量检测报告。
+26. 自动生成 v0.4 数据质量检测报告；
+27. 使用 Matplotlib 绘制柱状图；
+28. 使用 Matplotlib 绘制直方图；
+29. 绘制 task episode 数量图；
+30. 绘制 reward 分布图；
+31. 绘制 task success rate 图；
+32. 绘制 task average reward 图；
+33. 使用函数组织可视化代码；
+34. 自动保存可视化结果到 `results/figures/`。
 
-当前项目已经从单纯的 Python 练习，升级为一个面向机器人 episode 数据的基础评测与数据质量检测工具。
+当前项目已经从单纯的 Python 练习，升级为一个面向机器人 episode 数据的基础评测、数据质量检测和可视化分析工具。
 
 ---
 
 ## 10. 后续计划
 
 这个项目会持续迭代，不是一次性完成。
-
-### v0.5 数据可视化
-
-后续计划加入可视化分析功能，包括：
-
-* 绘制 reward 分布图；
-* 绘制 success rate 图；
-* 绘制 average steps 图；
-* 绘制不同 task 的指标对比图；
-* 绘制失败 episode 分布图；
-* 保存可视化结果到 `results/figures/`。
-
----
 
 ### v0.6 自动化评测报告增强
 
@@ -545,6 +626,8 @@ Task imbalance ratio threshold: 3.0
 * 汇总 task-level 评测指标；
 * 汇总失败 episode；
 * 汇总异常 episode；
+* 汇总数据质量检测结果；
+* 汇总可视化图片路径；
 * 支持 txt / json 格式报告；
 * 为后续数据闭环、数据筛选和模型评测做准备。
 
@@ -557,7 +640,8 @@ Task imbalance ratio threshold: 3.0
 * 根据失败 episode 筛选需要回流的数据；
 * 根据异常数据生成清洗建议；
 * 根据 task 分布生成补采样建议；
-* 将质量检测结果与评测指标结合，形成更完整的数据闭环分析工具。
+* 根据低 success rate 任务生成重点分析建议；
+* 将质量检测结果、评测指标和可视化结果结合，形成更完整的数据闭环分析工具。
 
 ---
 
@@ -565,4 +649,4 @@ Task imbalance ratio threshold: 3.0
 
 当前版本仍然是基础版本，但项目结构会按照长期项目维护。
 
-本项目会围绕机器人数据闭环、数据评测、数据质量分析和可视化持续扩展。通过持续迭代，本项目将逐步把 Python、NumPy、Pandas、数据质量检测、可视化和机器人评测指标结合起来，形成一个能够展示岗位匹配度的学习型 GitHub 项目。
+本项目会围绕机器人数据闭环、数据评测、数据质量分析和可视化持续扩展。通过持续迭代，本项目将逐步把 Python、NumPy、Pandas、Matplotlib、数据质量检测、可视化和机器人评测指标结合起来，形成一个能够展示岗位匹配度的学习型 GitHub 项目。
