@@ -1,0 +1,60 @@
+Robot Episode Data Quality Report v0.4
+================================================
+
+Required Column Check
+------------------------------------------------
+All required columns exist.
+
+Missing Value Summary
+------------------------------------------------
+episode_id    0
+task          0
+reward        0
+success       0
+steps         0
+
+Missing Value Check Summary
+------------------------------------------------
+Total episode count: 5
+Episodes with missing values: 0
+Missing episode rate: 0.0
+
+Success Label Check Summary
+------------------------------------------------
+Invalid success label count: 0
+Invalid success label rate: 0.0
+
+Reward Check Summary
+------------------------------------------------
+Reward valid range: [0, 100]
+Invalid reward count: 0
+Invalid reward rate: 0.0
+
+Steps Check Summary
+------------------------------------------------
+Steps valid range: [1, 1000]
+Invalid steps count: 0
+Invalid steps rate: 0.0
+
+Episode ID Duplicate Check Summary
+------------------------------------------------
+Duplicated episode_id row count: 0
+
+Episode ID Continuity Check Summary
+------------------------------------------------
+Unique episode_id count: 5
+Missing episode_id count: 0
+
+Task Episode Count
+------------------------------------------------
+pick_cube      2
+open_drawer    2
+push_button    1
+
+Task Balance Check Summary
+------------------------------------------------
+Minimum task count: 1
+Maximum task count: 2
+Task imbalance ratio: 2.0
+Task minimum count threshold: 2
+Task imbalance ratio threshold: 3.0
