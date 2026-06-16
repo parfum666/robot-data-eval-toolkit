@@ -1,4 +1,8 @@
-numpy
-panda
-matplotlib
+# Task goal:
+# List third-party Python packages required by this project.
 
+numpy
+pandas
+matplotlib
+fastapi
+uvicorn
