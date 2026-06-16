@@ -3,3 +3,14 @@ __pycache__/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# SQLite database files
+data/*.db
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environments
+.venv/
+venv/
