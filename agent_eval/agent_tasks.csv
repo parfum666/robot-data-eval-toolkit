@@ -1,0 +1,16 @@
+task_id,task_type,task,steps,tool_calls,success,failure_reason,final_score
+1,data_analysis,Analyze robot episode success rate,4,"read_csv|calculate_metrics|generate_report",1,,0.92
+2,data_analysis,Find badcase episodes from robot data,5,"read_csv|filter_failed_cases|summarize_failure_reason",1,,0.88
+3,data_analysis,Generate task-level evaluation report,6,"read_csv|group_by_task|calculate_success_rate|generate_report",1,,0.90
+4,data_analysis,Check missing values in episode data,3,"read_csv|check_missing_values|generate_report",1,,0.95
+5,data_analysis,Detect abnormal reward values,4,"read_csv|check_reward_range|generate_report",1,,0.86
+6,file_operation,Read a missing CSV file and summarize it,2,"read_file",0,file_not_found,0.20
+7,file_operation,Load robot trajectory log and count steps,4,"read_file|parse_log|count_steps",1,,0.84
+8,tool_use,Query failed tasks from database,5,"connect_db|query_badcases|summarize_results",1,,0.87
+9,tool_use,Call database query with wrong table name,3,"connect_db|query_table",0,tool_call_error,0.30
+10,planning,Plan a multi-step robot data analysis workflow,7,"decompose_task|select_tools|execute_steps|check_result",1,,0.82
+11,planning,Complete long-horizon analysis without checking result,8,"decompose_task|read_csv|calculate_metrics|generate_report",0,missing_verification,0.45
+12,reasoning,Explain why an episode is a badcase,5,"read_episode|analyze_failure_reason|generate_explanation",1,,0.89
+13,reasoning,Infer failure reason from incomplete trajectory data,6,"read_episode|analyze_steps|infer_failure",0,insufficient_information,0.40
+14,multimodal,Analyze image-based robot task result,5,"load_image|inspect_result|generate_summary",1,,0.80
+15,multimodal,Analyze corrupted image observation,3,"load_image|inspect_result",0,invalid_input,0.25

@@ -1,0 +1,111 @@
+Agent Task Evaluation Report v02
+======================================================================
+
+1. Overall Evaluation
+----------------------------------------------------------------------
+task_count: 15
+success_rate: 0.6667
+average_steps: 4.6667
+average_score: 0.6887
+
+2. Badcase Summary
+----------------------------------------------------------------------
+badcase_count: 5
+badcase_rate: 0.3333
+
+3. Failure Reason Distribution
+----------------------------------------------------------------------
+file_not_found              1
+tool_call_error             1
+missing_verification        1
+insufficient_information    1
+invalid_input               1
+
+4. Tool Call Analysis
+----------------------------------------------------------------------
+average_tool_calls: 2.9333
+success_average_tool_calls: 3.2000
+failed_average_tool_calls: 2.4000
+
+Tool Usage Frequency:
+read_csv                    6
+generate_report             5
+decompose_task              2
+inspect_result              2
+load_image                  2
+read_file                   2
+read_episode                2
+connect_db                  2
+calculate_metrics           2
+infer_failure               1
+analyze_steps               1
+generate_explanation        1
+analyze_failure_reason      1
+check_result                1
+execute_steps               1
+select_tools                1
+summarize_results           1
+query_table                 1
+query_badcases              1
+count_steps                 1
+parse_log                   1
+check_reward_range          1
+check_missing_values        1
+calculate_success_rate      1
+group_by_task               1
+summarize_failure_reason    1
+filter_failed_cases         1
+generate_summary            1
+
+Tool Usage Frequency in Failed Tasks:
+read_file            1
+connect_db           1
+query_table          1
+decompose_task       1
+read_csv             1
+calculate_metrics    1
+generate_report      1
+read_episode         1
+analyze_steps        1
+infer_failure        1
+load_image           1
+inspect_result       1
+
+5. Tool Call Error Tasks
+----------------------------------------------------------------------
+task_id: 9 | task_type: tool_use | tool_calls: connect_db|query_table | failure_reason: tool_call_error | task: Call database query with wrong table name
+
+6. Task Type Evaluation
+----------------------------------------------------------------------
+                task_count  success_rate  average_steps  average_score  average_tool_calls  failure_rate
+task_type                                                                                               
+file_operation           2           0.5            3.0          0.520                 2.0           0.5
+multimodal               2           0.5            4.0          0.525                 2.5           0.5
+planning                 2           0.5            7.5          0.635                 4.0           0.5
+reasoning                2           0.5            5.5          0.645                 3.0           0.5
+tool_use                 2           0.5            4.0          0.585                 2.5           0.5
+data_analysis            5           1.0            4.4          0.902                 3.2           0.0
+
+Most Failed Task Type:
+task_type: file_operation
+failure_rate: 0.5000
+
+7. Long-horizon Task Analysis
+----------------------------------------------------------------------
+success_average_steps: 4.8000
+failed_average_steps: 4.4000
+long_horizon_count: 4
+long_horizon_success_rate: 0.5000
+long_horizon_failure_rate: 0.5000
+
+Long-horizon Badcase Details:
+task_id: 11 | task_type: planning | steps: 8 | tool_call_count: 4 | failure_reason: missing_verification | task: Complete long-horizon analysis without checking result
+task_id: 13 | task_type: reasoning | steps: 6 | tool_call_count: 3 | failure_reason: insufficient_information | task: Infer failure reason from incomplete trajectory data
+
+8. Badcase Details
+----------------------------------------------------------------------
+task_id: 6 | task_type: file_operation | steps: 2 | tool_calls: read_file | failure_reason: file_not_found | task: Read a missing CSV file and summarize it
+task_id: 9 | task_type: tool_use | steps: 3 | tool_calls: connect_db|query_table | failure_reason: tool_call_error | task: Call database query with wrong table name
+task_id: 11 | task_type: planning | steps: 8 | tool_calls: decompose_task|read_csv|calculate_metrics|generate_report | failure_reason: missing_verification | task: Complete long-horizon analysis without checking result
+task_id: 13 | task_type: reasoning | steps: 6 | tool_calls: read_episode|analyze_steps|infer_failure | failure_reason: insufficient_information | task: Infer failure reason from incomplete trajectory data
+task_id: 15 | task_type: multimodal | steps: 3 | tool_calls: load_image|inspect_result | failure_reason: invalid_input | task: Analyze corrupted image observation

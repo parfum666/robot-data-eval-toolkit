@@ -1,0 +1,41 @@
+Agent Task Evaluation Report v0.1
+============================================================
+
+1. Overall Evaluation
+------------------------------------------------------------
+task_count: 15
+success_rate: 0.6667
+average_steps: 4.6667
+average_score: 0.6887
+
+2. Badcase Summary
+------------------------------------------------------------
+badcase_count: 5
+badcase_rate: 0.3333
+
+3. Failure Reason Distribution
+------------------------------------------------------------
+file_not_found              1
+tool_call_error             1
+missing_verification        1
+insufficient_information    1
+invalid_input               1
+
+4. Task Type Evaluation
+------------------------------------------------------------
+                task_count  success_rate  average_steps  average_score
+task_type                                                             
+data_analysis            5           1.0            4.4          0.902
+file_operation           2           0.5            3.0          0.520
+multimodal               2           0.5            4.0          0.525
+planning                 2           0.5            7.5          0.635
+reasoning                2           0.5            5.5          0.645
+tool_use                 2           0.5            4.0          0.585
+
+5. Badcase Details
+------------------------------------------------------------
+task_id: 6 | task_type: file_operation | steps: 2 | failure_reason: file_not_found | task: Read a missing CSV file and summarize it
+task_id: 9 | task_type: tool_use | steps: 3 | failure_reason: tool_call_error | task: Call database query with wrong table name
+task_id: 11 | task_type: planning | steps: 8 | failure_reason: missing_verification | task: Complete long-horizon analysis without checking result
+task_id: 13 | task_type: reasoning | steps: 6 | failure_reason: insufficient_information | task: Infer failure reason from incomplete trajectory data
+task_id: 15 | task_type: multimodal | steps: 3 | failure_reason: invalid_input | task: Analyze corrupted image observation

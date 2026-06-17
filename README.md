@@ -1,16 +1,16 @@
 # Robot / Agent Episode Data Evaluation Toolkit
 
-这是一个面向 **机器人数据开发、AI Agent 评测、具身智能任务评测与数据闭环方向** 的学习型项目。
+这是一个面向 **机器人数据开发、AI Agent 评测、具身智能任务评测与数据闭环方向** 的学习型 GitHub 项目。
 
 当前版本为：
 
 ```text
-v0.7 Storage Modeling Closing Version
+v0.8 Agent Task Evaluation Demo
 ```
 
-本项目从 Python、NumPy、CSV 文件读取和 Pandas 数据分析基础出发，逐步扩展到机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测、数据可视化、SQLite 数据库存储、SQL 查询、FastAPI 后端接口封装，以及 MySQL / MongoDB 存储建模理解。
+本项目从 Python、NumPy、CSV 文件读取和 Pandas 数据分析基础出发，逐步扩展到机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测、数据可视化、SQLite 数据库存储、SQL 查询、FastAPI 后端接口封装、MySQL / MongoDB 存储建模理解，并进一步迁移到 AI Agent 任务轨迹评测。
 
-项目的目标不是构建复杂后端系统，而是围绕机器人和 AI Agent 的任务执行数据，构建一个能够展示 **数据读取、数据清洗、指标评测、badcase 检索、数据库建模和基础接口封装能力** 的 GitHub 项目。
+项目的目标不是构建复杂后端系统或训练大模型，而是围绕机器人和 AI Agent 的任务执行数据，构建一个能够展示 **数据读取、数据清洗、指标评测、badcase 检索、工具调用分析、数据库建模和基础接口封装能力** 的长期学习型项目。
 
 ---
 
@@ -18,30 +18,32 @@ v0.7 Storage Modeling Closing Version
 
 在机器人仿真、具身智能任务执行和 AI Agent 长时序任务评测中，系统通常会产生大量 episode / trajectory 数据，例如：
 
-* `episode_id`：episode 编号；
+* `episode_id` / `task_id`：任务或 episode 编号；
 * `task`：任务名称；
-* `reward`：任务奖励；
+* `task_type`：任务类型；
+* `reward` / `final_score`：任务奖励或最终评分；
 * `success`：任务是否成功；
 * `steps` / `episode_length`：任务执行步数；
+* `tool_calls`：Agent 调用过的工具序列；
 * `failure_reason`：失败原因；
 * `metadata`：机器人、仿真环境、相机、传感器等元信息；
 * `files`：轨迹文件、图像文件、日志文件路径；
 * `badcase`：失败 episode 或异常任务执行记录。
 
-这些数据不仅可以用于机器人任务评测，也可以迁移到 AI Agent 任务评测场景中。
+机器人 episode 记录的是机器人完成一次任务的过程，而 Agent trajectory 记录的是 AI Agent 完成一次任务的过程。二者都可以围绕 `task`、`steps`、`success`、`failure_reason`、`badcase` 等字段进行评测。
 
-例如：
+| 机器人 episode      | AI Agent 任务轨迹                |
+| ---------------- | ---------------------------- |
+| `episode_id`     | `task_id`                    |
+| `task`           | `task`                       |
+| `reward`         | `final_score`                |
+| `steps`          | `reasoning / tool-use steps` |
+| `success`        | `task success`               |
+| `failure_reason` | `failure reason`             |
+| `action`         | `tool_calls`                 |
+| `badcase`        | `failed agent trajectory`    |
 
-| 机器人 episode    | AI Agent 任务轨迹              |
-| -------------- | -------------------------- |
-| task           | agent task                 |
-| steps          | reasoning / tool-use steps |
-| success        | task success               |
-| failure_reason | failure reason             |
-| badcase        | failed agent trajectory    |
-| trajectory     | execution trace            |
-
-因此，本项目后续会从“机器人 episode 数据评测”逐步过渡到“机器人 / Agent episode 数据管理与评测”。
+因此，本项目从“机器人 episode 数据评测”逐步扩展为“机器人 / Agent episode 数据管理与评测工具”。
 
 ---
 
@@ -59,15 +61,20 @@ CSV / JSON 数据
 → SQL 查询
 → FastAPI 后端接口
 → MySQL / MongoDB 存储建模理解
-→ badcase 检索与评测数据管理
+→ Agent task trajectory 评测
+→ tool_calls 工具调用分析
+→ badcase 检索与失败原因归因
 ```
 
 项目重点关注：
 
-* episode 数据读取；
-* success rate、average reward、average steps 等指标计算；
-* task-level 分组统计；
-* 失败 episode 自动筛选；
+* episode / trajectory 数据读取；
+* success rate、average reward、average steps、average score 等指标计算；
+* task-level / task_type-level 分组统计；
+* 失败 episode / failed trajectory 自动筛选；
+* failure_reason 分布统计；
+* tool_calls 工具调用分析；
+* long-horizon task 失败分析；
 * 数据质量检测；
 * 可视化分析；
 * SQLite 本地存储；
@@ -83,10 +90,10 @@ CSV / JSON 数据
 当前版本已经完成到：
 
 ```text
-v0.7 Storage Modeling Closing Version
+v0.8 Agent Task Evaluation Demo
 ```
 
-v0.7 是数据开发方向的阶段性收尾版本。
+v0.8 在前期机器人 episode 数据评测、SQLite / FastAPI 数据管理、MySQL / MongoDB 存储建模的基础上，新增了 AI Agent 任务轨迹评测模块。
 
 当前项目已经完成：
 
@@ -100,16 +107,26 @@ v0.7 是数据开发方向的阶段性收尾版本。
 * FastAPI 后端接口；
 * MySQL 表结构与查询语句设计；
 * MongoDB 文档型 episode 元数据建模；
-* MySQL / MongoDB 与机器人 episode 数据平台场景的对应说明。
+* Agent task trajectory 数据结构设计；
+* Agent success rate、average steps、average score 计算；
+* Agent badcase 分析；
+* failure_reason 分布统计；
+* tool_calls 工具调用分析；
+* task_type 维度失败率分析；
+* long-horizon task 失败分析；
+* Agent 任务评测报告生成。
 
 说明：
 
 ```text
 MySQL / MongoDB 当前主要用于存储建模理解和代码模板展示，
 不作为复杂数据库工程项目展开。
+
+Agent Evaluation 当前主要用于实习生级别的任务轨迹评测 demo，
+不涉及大模型训练和复杂 Agent 框架开发。
 ```
 
-后续主线将转向：
+后续主线将继续围绕：
 
 ```text
 AI Agent 评测 + 具身智能任务评测
@@ -335,9 +352,9 @@ GET /badcases
 
 ### v0.7 Storage Modeling Closing Version
 
-v0.7 是数据开发方向的收尾阶段，主要补充 MySQL 和 MongoDB 的存储建模理解。
+v0.7 是数据开发方向的阶段性收尾版本，主要补充 MySQL 和 MongoDB 的存储建模理解。
 
-该版本不继续深入复杂后端系统、分布式系统或数据库性能优化，而是围绕岗位要求中的“熟悉 MySQL、MongoDB 等存储组件”进行轻量补充。
+该版本不继续深入复杂后端系统、分布式系统或数据库性能优化，而是围绕“熟悉 MySQL、MongoDB 等存储组件”的岗位要求进行轻量补充。
 
 已完成内容包括：
 
@@ -369,12 +386,131 @@ docs/mongodb_notes.md
 
 ---
 
+### v0.8 Agent Task Evaluation Demo
+
+v0.8 在前期机器人 episode 数据评测的基础上，进一步将评测思路迁移到 AI Agent 任务轨迹分析中。
+
+机器人 episode 记录的是机器人完成一次任务的过程，而 Agent trajectory 记录的是 AI Agent 完成一次任务的过程。二者都可以围绕以下字段进行评测：
+
+```text
+task
+steps
+success
+failure_reason
+badcase
+score / reward
+```
+
+在 v0.8 中，项目新增 `agent_eval/` 模块，用于模拟 AI Agent 任务轨迹评测流程。
+
+新增数据文件：
+
+```text
+agent_eval/agent_tasks.csv
+```
+
+该文件包含以下字段：
+
+```text
+task_id
+task_type
+task
+steps
+tool_calls
+success
+failure_reason
+final_score
+```
+
+字段说明：
+
+* `task_id`：Agent 任务编号；
+* `task_type`：任务类型，例如 data_analysis、tool_use、planning、reasoning、multimodal；
+* `task`：具体任务描述；
+* `steps`：Agent 完成任务使用的步骤数；
+* `tool_calls`：Agent 调用过的工具序列；
+* `success`：任务是否成功；
+* `failure_reason`：失败原因；
+* `final_score`：任务完成质量评分。
+
+已实现内容包括：
+
+1. 读取 Agent 任务轨迹数据；
+2. 计算整体评测指标：
+
+   * task count；
+   * success rate；
+   * average steps；
+   * average score；
+3. 筛选失败任务 badcase；
+4. 统计 badcase count 和 badcase rate；
+5. 统计 failure reason 分布；
+6. 分析 tool_calls 工具调用情况；
+7. 统计每条任务的工具调用次数；
+8. 对比成功任务和失败任务的平均工具调用次数；
+9. 统计全部任务中的工具使用频率；
+10. 统计失败任务中的工具使用频率；
+11. 筛选 tool_call_error 类型任务；
+12. 按 task_type 分析不同任务类型的成功率、失败率、平均步数和平均得分；
+13. 分析 long-horizon task，即步骤较长任务中的失败情况；
+14. 生成 Agent 任务评测报告。
+
+v0.8 新增脚本包括：
+
+```text
+agent_eval/01_agent_eval_basic.py
+agent_eval/03_agent_eval_report.py
+agent_eval/04_tool_call_analysis.py
+agent_eval/05_task_type_failure_analysis.py
+agent_eval/06_long_horizon_failure_analysis.py
+agent_eval/07_agent_eval_report_v02.py
+```
+
+核心报告脚本为：
+
+```text
+agent_eval/07_agent_eval_report_v02.py
+```
+
+运行后会生成：
+
+```text
+results/agent_eval_report_v02.txt
+```
+
+该报告整合了：
+
+* Agent 整体任务完成情况；
+* badcase 数量和失败率；
+* failure reason 分布；
+* tool_calls 工具调用分析；
+* task_type 维度失败率分析；
+* long-horizon task 失败分析；
+* 失败任务详情。
+
+v0.8 的核心目标是：
+
+```text
+将机器人 episode 评测中的 success rate、steps、failure_reason、badcase 等分析方法迁移到 AI Agent 任务轨迹评测中，用于模拟长时序任务评测、工具调用失败分析和失败样本沉淀流程。
+```
+
+---
+
 ## 5. 项目结构
 
 ```text
 robot-data-eval-toolkit/
 ├── app/
 │   └── main.py
+│
+├── agent_eval/
+│   ├── agent_tasks.csv
+│   ├── 01_agent_eval_basic.py
+│   ├── 03_agent_eval_report.py
+│   ├── 04_tool_call_analysis.py
+│   ├── 05_task_type_failure_analysis.py
+│   ├── 06_long_horizon_failure_analysis.py
+│   └── 07_agent_eval_report_v02.py
 │
 ├── data/
 │   ├── episode_log.csv
@@ -418,6 +554,8 @@ robot-data-eval-toolkit/
 │   ├── csv_eval_report_v02.txt
 │   ├── pandas_eval_report_v03.txt
 │   ├── data_quality_report_v04.txt
+│   ├── agent_eval_report_v01.txt
+│   ├── agent_eval_report_v02.txt
 │   └── figures/
 │       ├── task_episode_count_v05.png
 │       ├── reward_distribution_v05.png
@@ -446,6 +584,7 @@ robot-data-eval-toolkit/
 * `data/episodes.csv` 是早期 CSV 学习阶段使用的数据；
 * `data/episodes_sql_demo.csv` 是 SQLite 和 FastAPI 阶段使用的示例数据；
 * `data/robot_episodes.db` 是运行脚本后生成的 SQLite 数据库文件，建议通过 `.gitignore` 忽略，不上传 GitHub；
+* `agent_eval/` 保存 AI Agent 任务轨迹评测 demo；
 * `scripts/` 保存各阶段 Python 学习脚本；
 * `app/main.py` 是 FastAPI 后端入口文件；
 * `storage_demos/` 保存 MySQL / MongoDB 存储建模与连接模板；
@@ -569,8 +708,6 @@ data/robot_episodes.db
 
 并创建 `episodes` 表。
 
----
-
 #### 第二步：将 CSV 数据导入 SQLite
 
 ```bash
@@ -584,8 +721,6 @@ data/episodes_sql_demo.csv
 ```
 
 并将数据写入 SQLite 数据库中的 `episodes` 表。
-
----
 
 #### 第三步：启动 FastAPI 后端服务
 
@@ -616,7 +751,7 @@ storage_demos/mongodb_collection_query_demo.py
 storage_demos/mongodb_real_operation_template.py
 ```
 
-其中，以下两个 Python 文件可以直接运行，用于理解 MongoDB 文档结构：
+以下两个 Python 文件可以直接运行，用于理解 MongoDB 文档结构：
 
 ```bash
 py -3.13 storage_demos/mongodb_episode_document_demo.py
@@ -628,6 +763,46 @@ py -3.13 storage_demos/mongodb_collection_query_demo.py
 ```text
 storage_demos/mysql_import_episodes.py
 storage_demos/mongodb_real_operation_template.py
+```
+
+---
+
+### 6.9 运行 v0.8 Agent Task Evaluation Demo
+
+运行基础指标评测：
+
+```bash
+py -3.13 agent_eval/01_agent_eval_basic.py
+```
+
+运行工具调用分析：
+
+```bash
+py -3.13 agent_eval/04_tool_call_analysis.py
+```
+
+运行 task_type 维度失败率分析：
+
+```bash
+py -3.13 agent_eval/05_task_type_failure_analysis.py
+```
+
+运行 long-horizon 任务失败分析：
+
+```bash
+py -3.13 agent_eval/06_long_horizon_failure_analysis.py
+```
+
+生成完整 Agent 评测报告：
+
+```bash
+py -3.13 agent_eval/07_agent_eval_report_v02.py
+```
+
+生成报告位置：
+
+```text
+results/agent_eval_report_v02.txt
 ```
 
 ---
@@ -855,27 +1030,139 @@ MongoDB:
 
 ---
 
-## 9. 与目标岗位的对应关系
+## 9. Agent Task Evaluation 说明
 
-| 岗位能力要求         | 当前项目体现                                                       |
-| -------------- | ------------------------------------------------------------ |
-| Python 基础      | 使用 Python 编写 episode 数据分析、质量检测、可视化和后端接口脚本                    |
-| NumPy / Pandas | 使用 NumPy / Pandas 完成指标统计、分组分析和异常筛选                           |
-| 数据质量分析         | 检查缺失值、异常 reward、异常 steps、非法 success 标签和重复 episode_id         |
-| SQL / SQLite   | 使用 SQLite 建表、插入数据、查询数据、聚合统计和分组统计                             |
-| MySQL 理解       | 设计 MySQL 版 episodes 表结构和查询语句，理解关系型数据库迁移方式                    |
-| MongoDB 理解     | 设计 episode 文档结构，理解 document / collection 和嵌套字段查询             |
-| 数据查询           | 支持按 task 查询 episode、查询 badcase、查询整体指标                        |
-| 数据评测           | 计算 success rate、average reward、average steps                 |
-| badcase 分析     | 筛选 `success = 0` 的失败 episode，并记录 failure_reason              |
-| 可视化分析          | 绘制 task 数量、reward 分布、success rate、average reward 图           |
-| FastAPI 后端     | 提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` 接口            |
-| 数据平台理解         | 模拟从 CSV 到数据库再到 API 查询的基础数据链路                                 |
-| AI Agent 评测迁移  | episode、steps、success、failure_reason、badcase 可迁移到 Agent 任务评测 |
+v0.8 中的 Agent 评测模块围绕以下问题展开：
+
+```text
+Agent 整体任务完成情况如何？
+哪些任务失败了？
+失败原因主要是什么？
+失败是否和工具调用有关？
+哪类任务更容易失败？
+步骤较长的任务是否更容易失败？
+```
+
+### 9.1 Agent 任务数据字段
+
+`agent_eval/agent_tasks.csv` 中包含：
+
+| 字段               | 含义         |
+| ---------------- | ---------- |
+| `task_id`        | Agent 任务编号 |
+| `task_type`      | 任务类型       |
+| `task`           | 任务描述       |
+| `steps`          | 执行步数       |
+| `tool_calls`     | 工具调用序列     |
+| `success`        | 是否成功       |
+| `failure_reason` | 失败原因       |
+| `final_score`    | 任务最终得分     |
 
 ---
 
-## 10. 当前学习进度
+### 9.2 Agent 评测指标
+
+当前 Agent 评测 demo 支持：
+
+* `task_count`：任务总数；
+* `success_rate`：任务成功率；
+* `average_steps`：平均执行步数；
+* `average_score`：平均任务得分；
+* `badcase_count`：失败任务数量；
+* `badcase_rate`：失败任务比例；
+* `failure_reason` 分布；
+* `tool_call_count`：每条任务工具调用次数；
+* `task_type` 维度成功率和失败率；
+* `long_horizon_task` 失败分析。
+
+---
+
+### 9.3 Agent badcase 定义
+
+当前 demo 中，badcase 定义为：
+
+```text
+success = 0
+```
+
+即失败的 Agent 任务轨迹。
+
+后续可以进一步扩展为：
+
+```text
+success = 0
+或 final_score 过低
+或 steps 过高
+或 tool_call_error
+或 missing_verification
+```
+
+---
+
+### 9.4 tool_calls 分析
+
+Agent 和普通表格任务的区别之一是：Agent 通常会调用工具。
+
+例如：
+
+```text
+read_csv|group_by_task|calculate_success_rate|generate_report
+```
+
+当前项目会将 `tool_calls` 拆分为工具列表，并统计：
+
+* 每条任务调用了几个工具；
+* 成功任务和失败任务的平均工具调用次数；
+* 所有工具的使用频率；
+* 失败任务中的工具使用频率；
+* `tool_call_error` 类型任务详情。
+
+---
+
+### 9.5 long-horizon task 分析
+
+当前 demo 中，暂时将：
+
+```text
+steps >= 6
+```
+
+定义为 long-horizon task。
+
+该分析用于观察：
+
+```text
+Agent 是否在多步骤、长链路任务中更容易失败。
+```
+
+---
+
+## 10. 与目标岗位的对应关系
+
+| 岗位能力要求           | 当前项目体现                                                              |
+| ---------------- | ------------------------------------------------------------------- |
+| Python 基础        | 使用 Python 编写 episode 数据分析、质量检测、可视化和后端接口脚本                           |
+| NumPy / Pandas   | 使用 NumPy / Pandas 完成指标统计、分组分析和异常筛选                                  |
+| 数据质量分析           | 检查缺失值、异常 reward、异常 steps、非法 success 标签和重复 episode_id                |
+| SQL / SQLite     | 使用 SQLite 建表、插入数据、查询数据、聚合统计和分组统计                                    |
+| MySQL 理解         | 设计 MySQL 版 episodes 表结构和查询语句，理解关系型数据库迁移方式                           |
+| MongoDB 理解       | 设计 episode 文档结构，理解 document / collection 和嵌套字段查询                    |
+| 数据查询             | 支持按 task 查询 episode、查询 badcase、查询整体指标                               |
+| 数据评测             | 计算 success rate、average reward、average steps、average score          |
+| badcase 分析       | 筛选 `success = 0` 的失败 episode / failed trajectory，并记录 failure_reason |
+| 可视化分析            | 绘制 task 数量、reward 分布、success rate、average reward 图                  |
+| FastAPI 后端       | 提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` 接口                   |
+| 数据平台理解           | 模拟从 CSV 到数据库再到 API 查询的基础数据链路                                        |
+| AI Agent 任务轨迹评测  | 使用 task、steps、tool_calls、success、failure_reason 等字段分析 Agent 任务执行记录  |
+| Agent badcase 分析 | 筛选失败任务，并统计 failure_reason 分布                                        |
+| 工具调用分析           | 分析 tool_calls 字段，统计工具调用次数和失败任务中的工具使用频率                              |
+| 长时序任务评测          | 分析 steps 较高的 long-horizon task 是否更容易失败                              |
+| 任务类型评测           | 按 task_type 分组统计不同类型任务的成功率、失败率和平均得分                                 |
+| 具身智能评测迁移         | 将机器人 episode 评测思路迁移到 Agent trajectory 评测                            |
+
+---
+
+## 11. 当前学习进度
 
 目前已经完成：
 
@@ -931,45 +1218,57 @@ MongoDB:
 50. MongoDB episode 文档结构设计；
 51. Python 字典模拟 MongoDB document；
 52. Python 列表模拟 MongoDB collection；
-53. Python 连接 MongoDB 模板。
+53. Python 连接 MongoDB 模板；
+54. AI Agent 与 robot episode 的对应关系；
+55. Agent trajectory 数据结构设计；
+56. Agent success rate、average steps、average score 计算；
+57. Agent badcase 分析；
+58. Agent failure_reason 分布统计；
+59. Agent tool_calls 工具调用分析；
+60. Agent task_type 维度失败率分析；
+61. Agent long-horizon task 失败分析；
+62. Agent evaluation report v02 生成。
 
 ---
 
-## 11. 可用于简历的项目描述
+## 12. 可用于简历的项目描述
 
 ### 机器人 / Agent Episode 数据管理与评测工具
 
-基于 Python、Pandas、SQLite 和 FastAPI 构建机器人 episode 数据管理与评测后端原型，实现 CSV 数据读取、数据质量检测、SQLite 存储、SQL 指标查询、任务分组统计、badcase 检索和 FastAPI 接口封装；补充 MySQL / MongoDB 存储建模理解，设计关系型 episodes 表结构与文档型 episode 元数据结构，用于模拟机器人 / Agent 任务评测中的基础数据处理链路。
+基于 Python、Pandas、SQLite 和 FastAPI 构建机器人 / Agent episode 数据管理与评测工具，实现 CSV 数据读取、数据质量检测、SQLite 存储、SQL 指标查询、任务分组统计、badcase 检索和 API 接口封装；补充 MySQL / MongoDB 存储建模理解，设计关系型 episodes 表结构与文档型 episode 元数据结构；进一步将机器人 episode 评测思路迁移到 AI Agent 任务轨迹分析，基于 task、steps、tool_calls、success、failure_reason、final_score 等字段实现任务完成率、失败原因分布、工具调用频率、task_type 失败率和 long-horizon badcase 分析，用于模拟 Agent 任务评测与失败样本沉淀流程。
 
 ---
 
-## 12. 后续计划
+## 13. 后续计划
 
-当前项目的数据开发方向已经完成阶段性收尾，后续不继续深入复杂数据库工程、复杂后端系统或分布式系统实现。
+当前项目的数据开发方向已经完成阶段性收尾，Agent 任务评测模块也已经完成基础 demo。
+
+后续不继续深入复杂数据库工程、复杂后端系统、分布式系统实现或大模型训练。
 
 后续主线将转向：
 
 ```text
-AI Agent 评测 + 具身智能任务评测
+AI Agent 基础理解 + 具身智能任务评测 + 多模态任务数据分析
 ```
 
 计划继续补充：
 
-1. AI Agent 基础概念；
-2. Agent 任务轨迹与机器人 episode 的对应关系；
-3. Agent task、steps、tool_calls、success、failure_reason、badcase 数据结构；
-4. Agent Task Evaluation Demo；
-5. RAG、工具调用、多 Agent 协作的基础理解；
-6. 多模态与世界模型基础；
-7. 将当前项目升级为面向机器人 / Agent episode 的评测工具。
+1. LLM 与 AI Agent 的关系；
+2. Prompt、Tool Call、Function Calling 基础；
+3. RAG、Planning、Memory、Reflection 基础；
+4. 多 Agent 协作基础；
+5. 机器人作为 embodied agent 的任务评测理解；
+6. 多模态输入：图像、文本、状态、动作；
+7. 世界模型基础思想：state + action → next state；
+8. 面向 AI Agent 评测实习岗位的面试问答整理。
 
 ---
 
-## 13. 项目说明
+## 14. 项目说明
 
 当前项目是一个学习型项目，但按照长期维护的方向组织。
 
-项目从本地 CSV 数据分析开始，逐步扩展到 Pandas 数据分析、数据质量检测、可视化分析、SQLite 数据存储、FastAPI 后端接口、MySQL / MongoDB 存储建模理解。
+项目从本地 CSV 数据分析开始，逐步扩展到 Pandas 数据分析、数据质量检测、可视化分析、SQLite 数据存储、FastAPI 后端接口、MySQL / MongoDB 存储建模理解，并进一步扩展到 AI Agent 任务轨迹评测。
 
 通过持续迭代，本项目用于展示以下能力：
 
@@ -983,6 +1282,9 @@ AI Agent 评测 + 具身智能任务评测
 * 后端接口封装；
 * MySQL / MongoDB 存储建模理解；
 * badcase 检索；
+* Agent trajectory 评测；
+* tool_calls 工具调用分析；
+* long-horizon task 失败分析；
 * 机器人 / Agent episode 评测理解；
 * 数据闭环意识。
 
