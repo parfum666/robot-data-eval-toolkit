@@ -1,18 +1,22 @@
-# Robot Data Eval Toolkit
+# Robot / Agent Episode Data Evaluation Toolkit
 
-这是一个面向 **Seed 机器人数据开发实习生 / 机器人数据平台 / 数据闭环与评测方向** 的长期学习型项目。
+这是一个面向 **机器人数据开发、AI Agent 评测、具身智能任务评测与数据闭环方向** 的学习型项目。
 
-当前版本是 **v0.6 SQLite + FastAPI Backend**。
+当前版本为：
 
-项目从 Python、NumPy、CSV 文件读取和 Pandas 数据分析基础出发，逐步扩展到机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测、数据可视化、SQLite 数据库存储、SQL 查询以及 FastAPI 后端接口封装。
+```text
+v0.7 Storage Modeling Closing Version
+```
 
-本项目的目标不是一次性完成复杂系统，而是通过持续迭代，逐步构建一个能够展示机器人数据处理、数据评测、数据质量分析、数据库查询和基础后端接口能力的 GitHub 项目。
+本项目从 Python、NumPy、CSV 文件读取和 Pandas 数据分析基础出发，逐步扩展到机器人 episode 评测指标计算、失败 episode 筛选、数据质量检测、数据可视化、SQLite 数据库存储、SQL 查询、FastAPI 后端接口封装，以及 MySQL / MongoDB 存储建模理解。
+
+项目的目标不是构建复杂后端系统，而是围绕机器人和 AI Agent 的任务执行数据，构建一个能够展示 **数据读取、数据清洗、指标评测、badcase 检索、数据库建模和基础接口封装能力** 的 GitHub 项目。
 
 ---
 
-## 1. 项目背景
+## 1. 项目定位
 
-在机器人训练、仿真和评测过程中，通常会产生大量 episode 数据，例如：
+在机器人仿真、具身智能任务执行和 AI Agent 长时序任务评测中，系统通常会产生大量 episode / trajectory 数据，例如：
 
 * `episode_id`：episode 编号；
 * `task`：任务名称；
@@ -20,74 +24,100 @@
 * `success`：任务是否成功；
 * `steps` / `episode_length`：任务执行步数；
 * `failure_reason`：失败原因；
-* `.csv`、`.json`、`.jpg`、`.txt`、`.png` 等数据文件。
+* `metadata`：机器人、仿真环境、相机、传感器等元信息；
+* `files`：轨迹文件、图像文件、日志文件路径；
+* `badcase`：失败 episode 或异常任务执行记录。
 
-对于机器人数据开发和数据闭环方向，除了模型训练本身，还需要对采集到的数据进行管理、清洗、统计、评测、可视化、存储和查询。
+这些数据不仅可以用于机器人任务评测，也可以迁移到 AI Agent 任务评测场景中。
 
-本项目从简单的数据分析脚本开始，逐步升级为一个基础的机器人 episode 数据管理与评测后端工具，用于模拟机器人数据平台中的基础数据链路：
+例如：
+
+| 机器人 episode    | AI Agent 任务轨迹              |
+| -------------- | -------------------------- |
+| task           | agent task                 |
+| steps          | reasoning / tool-use steps |
+| success        | task success               |
+| failure_reason | failure reason             |
+| badcase        | failed agent trajectory    |
+| trajectory     | execution trace            |
+
+因此，本项目后续会从“机器人 episode 数据评测”逐步过渡到“机器人 / Agent episode 数据管理与评测”。
+
+---
+
+## 2. 项目数据链路
+
+当前项目模拟的基础数据链路如下：
 
 ```text
-CSV 数据
+CSV / JSON 数据
+→ 数据读取
 → 数据质量检查
 → 指标计算
 → 可视化分析
-→ SQLite 数据库存储
+→ SQLite 本地数据库存储
 → SQL 查询
 → FastAPI 后端接口
+→ MySQL / MongoDB 存储建模理解
+→ badcase 检索与评测数据管理
+```
+
+项目重点关注：
+
+* episode 数据读取；
+* success rate、average reward、average steps 等指标计算；
+* task-level 分组统计；
+* 失败 episode 自动筛选；
+* 数据质量检测；
+* 可视化分析；
+* SQLite 本地存储；
+* MySQL 表结构迁移理解；
+* MongoDB 文档型元数据建模；
+* FastAPI 查询接口封装；
+* badcase 检索与数据闭环理解。
+
+---
+
+## 3. 当前版本说明
+
+当前版本已经完成到：
+
+```text
+v0.7 Storage Modeling Closing Version
+```
+
+v0.7 是数据开发方向的阶段性收尾版本。
+
+当前项目已经完成：
+
+* Python / NumPy 基础数据处理；
+* CSV episode 数据读取；
+* Pandas 指标统计；
+* 数据质量检测；
+* Matplotlib 可视化；
+* SQLite 数据库存储；
+* SQL 查询与聚合统计；
+* FastAPI 后端接口；
+* MySQL 表结构与查询语句设计；
+* MongoDB 文档型 episode 元数据建模；
+* MySQL / MongoDB 与机器人 episode 数据平台场景的对应说明。
+
+说明：
+
+```text
+MySQL / MongoDB 当前主要用于存储建模理解和代码模板展示，
+不作为复杂数据库工程项目展开。
+```
+
+后续主线将转向：
+
+```text
+AI Agent 评测 + 具身智能任务评测
 ```
 
 ---
 
-## 2. 当前版本：v0.6 SQLite + FastAPI Backend
-
-当前版本已经完成 **v0.6 SQLite + FastAPI 后端阶段**。
-
-在 v0.6 中，项目新增了数据库和后端接口能力，包括：
-
-* 使用 SQLite 创建 `episodes` 数据表；
-* 将机器人 episode CSV 数据导入 SQLite 数据库；
-* 使用 SQL 查询 episode 数据；
-* 使用 SQL 计算整体指标：
-
-  * `episode_count`
-  * `success_rate`
-  * `average_reward`
-  * `average_steps`
-* 使用 SQL 按 `task` 分组统计；
-* 使用 SQL 查询失败 episode，也就是 badcase；
-* 使用 FastAPI 封装后端接口；
-* 提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` API；
-* 支持通过浏览器和 FastAPI 自动文档查看数据结果。
-
-v0.6 的核心后端文件为：
-
-```text
-app/main.py
-```
-
-v0.6 的核心数据文件为：
-
-```text
-data/episodes_sql_demo.csv
-```
-
-v0.6 的 SQLite 学习脚本包括：
-
-```text
-scripts/06_create_sqlite_db.py
-scripts/07_insert_one_episode.py
-scripts/08_select_all_episodes.py
-scripts/09_select_failed_episodes.py
-scripts/10_select_episodes_by_task.py
-scripts/11_sql_metrics.py
-scripts/12_group_by_task_metrics.py
-scripts/13_import_csv_to_sqlite.py
-scripts/14_query_badcases.py
-```
-
----
-
-## 3. 已实现功能
+## 4. 已实现功能
 
 ### v0.1 Python + NumPy 基础评测
 
@@ -108,54 +138,49 @@ v0.1 主要完成 Python 和 NumPy 基础练习，并初步模拟机器人 episo
 
 ### v0.2 CSV Episode Evaluation
 
-v0.2 在 v0.1 的基础上，新增了从 CSV 文件中读取机器人 episode 数据，并自动计算基础评测指标的功能。
+v0.2 在 v0.1 的基础上，新增从 CSV 文件中读取机器人 episode 数据，并自动计算基础评测指标的功能。
 
 已实现内容包括：
 
 1. 从 `data/episodes.csv` 中读取 episode 表格数据；
 2. 使用 `csv.DictReader` 将每一行 CSV 数据读取为字典；
-3. 读取并解析 `reward`、`success`、`steps` 字段；
-4. 使用 `float()` 将 reward 从字符串转换为小数；
-5. 使用 `int()` 将 success 和 steps 从字符串转换为整数；
-6. 统计 episode 总数量；
-7. 计算 total reward；
-8. 计算 average reward；
-9. 统计 success count；
-10. 计算 success rate；
-11. 计算 average steps；
-12. 将 CSV 评测结果保存到 `results/csv_eval_report_v02.txt`。
+3. 解析 `reward`、`success`、`steps` 字段；
+4. 使用 `float()` 和 `int()` 完成类型转换；
+5. 统计 episode 总数量；
+6. 计算 total reward；
+7. 计算 average reward；
+8. 统计 success count；
+9. 计算 success rate；
+10. 计算 average steps；
+11. 将评测结果保存到 `results/csv_eval_report_v02.txt`。
 
 ---
 
 ### v0.3 Pandas Data Analysis
 
-v0.3 在 v0.2 的基础上，引入 Pandas，对机器人 episode 数据进行更高效的表格化分析。
+v0.3 引入 Pandas，对机器人 episode 数据进行表格化分析。
 
 已实现内容包括：
 
 1. 使用 `pd.read_csv()` 读取 CSV 数据；
-2. 使用 `df.head()` 查看 DataFrame 前几行；
+2. 使用 `df.head()` 查看 DataFrame；
 3. 使用 `df.shape` 查看数据规模；
-4. 使用 `df.columns` 查看字段名称；
-5. 使用 `df["reward"]` 取出单列数据；
-6. 计算整体评测指标：
+4. 计算整体评测指标：
 
-   * episode count
-   * average reward
-   * success rate
-   * average steps
-7. 使用 `df.groupby("task")` 按任务类型分组统计指标；
-8. 生成 task-level evaluation report；
-9. 使用 `df[df["success"] == 0]` 筛选失败 episode；
-10. 统计失败 episode 数量和失败率；
-11. 使用 `value_counts()` 统计失败 episode 主要集中在哪些 task；
-12. 生成 Pandas 版评测报告 `results/pandas_eval_report_v03.txt`。
+   * episode count；
+   * average reward；
+   * success rate；
+   * average steps；
+5. 使用 `df.groupby("task")` 按任务类型分组统计；
+6. 使用 `df[df["success"] == 0]` 筛选失败 episode；
+7. 统计失败 episode 数量和失败率；
+8. 生成 Pandas 版评测报告 `results/pandas_eval_report_v03.txt`。
 
 ---
 
 ### v0.4 Data Quality Check
 
-v0.4 在 v0.3 的基础上，进一步加入数据质量检测功能。
+v0.4 加入数据质量检测功能。
 
 v0.3 主要回答：
 
@@ -181,62 +206,44 @@ v0.4 进一步回答：
 
 2. 检查缺失值：
 
-   * 使用 `df.isna().sum()` 统计每一列缺失值数量；
-   * 使用 `df[df.isna().any(axis=1)]` 筛选存在缺失值的 episode。
+   * 使用 `df.isna().sum()` 统计缺失值；
+   * 使用 `df[df.isna().any(axis=1)]` 筛选异常 episode。
 
 3. 检查 `success` 标签：
 
-   * 使用 `pd.to_numeric(..., errors="coerce")` 尝试转换为数字；
-   * 检查 `success` 是否只包含 `0` 和 `1`；
-   * 筛选非法 success 标签。
+   * 使用 `pd.to_numeric(..., errors="coerce")` 尝试转换；
+   * 检查 `success` 是否只包含 `0` 和 `1`。
 
 4. 检查 `reward` 异常：
 
    * 检查 reward 是否能转换为数字；
-   * 检查 reward 是否小于 `REWARD_MIN`；
-   * 检查 reward 是否大于 `REWARD_MAX`；
-   * 筛选非空但异常的 reward episode。
+   * 检查 reward 是否超出设定范围。
 
 5. 检查 `steps` 异常：
 
    * 检查 steps 是否能转换为数字；
-   * 检查 steps 是否小于 `STEPS_MIN`；
-   * 检查 steps 是否大于 `STEPS_MAX`；
+   * 检查 steps 是否超出设定范围；
    * 检查 steps 是否为整数。
 
 6. 检查 `episode_id`：
 
-   * 使用 `duplicated(keep=False)` 检查重复 episode_id；
-   * 检查 episode_id 是否从 1 开始连续递增；
-   * 输出缺失的 episode_id。
+   * 检查重复 episode_id；
+   * 检查 episode_id 是否连续。
 
 7. 检查 `task` 数据量：
 
-   * 使用 `value_counts()` 统计每个 task 的 episode 数量；
-   * 检查是否存在样本数量过少的 task；
-   * 检查 task 数据分布是否不均衡。
+   * 统计每个 task 的 episode 数量；
+   * 检查是否存在样本数量过少的 task。
 
 8. 生成数据质量检测报告：
 
-   * 输出到 `results/data_quality_report_v04.txt`。
+   * `results/data_quality_report_v04.txt`
 
 ---
 
 ### v0.5 Data Visualization
 
-v0.5 在 v0.4 的基础上，进一步加入数据可视化功能。
-
-v0.4 主要回答：
-
-```text
-数据有没有缺失、异常、不连续、不均衡？
-```
-
-v0.5 进一步回答：
-
-```text
-这些数据问题和评测结果能不能用图更直观地展示出来？
-```
+v0.5 加入数据可视化功能。
 
 已实现内容包括：
 
@@ -266,15 +273,9 @@ results/figures/task_average_reward_v05.png
 
 ### v0.6 SQLite + FastAPI Backend
 
-v0.6 在 v0.5 的基础上，进一步从“本地数据分析脚本”升级到“基础数据管理与后端查询服务”。
+v0.6 从“本地数据分析脚本”升级到“基础数据管理与后端查询服务”。
 
-v0.5 主要回答：
-
-```text
-如何对机器人 episode 数据进行可视化分析？
-```
-
-v0.6 进一步回答：
+v0.6 主要回答：
 
 ```text
 如何把机器人 episode 数据存入数据库，并通过后端接口提供查询能力？
@@ -299,51 +300,76 @@ steps
 failure_reason
 ```
 
-3. 使用 SQL 创建表：
+3. 从 `data/episodes_sql_demo.csv` 读取机器人 episode 数据；
 
-```sql
-CREATE TABLE IF NOT EXISTS episodes (
-    episode_id INTEGER PRIMARY KEY,
-    task TEXT,
-    reward REAL,
-    success INTEGER,
-    steps INTEGER,
-    failure_reason TEXT
-)
-```
+4. 将 CSV 数据批量导入 SQLite；
 
-4. 从 `data/episodes_sql_demo.csv` 读取机器人 episode 数据；
+5. 使用 SQL 查询全部 episode；
 
-5. 将 CSV 数据批量导入 SQLite；
+6. 使用 SQL 按 `task` 查询 episode；
 
-6. 使用 SQL 查询全部 episode；
+7. 使用 SQL 查询失败 episode；
 
-7. 使用 SQL 按 `task` 查询 episode；
-
-8. 使用 SQL 查询失败 episode；
-
-9. 使用 SQL 计算整体指标：
+8. 使用 SQL 计算整体指标：
 
    * `episode_count`
    * `success_rate`
    * `average_reward`
    * `average_steps`
 
-10. 使用 SQL 按 `task` 分组统计指标；
+9. 使用 SQL 按 `task` 分组统计指标；
 
-11. 使用 FastAPI 创建后端应用；
+10. 使用 FastAPI 创建后端应用；
 
-12. 提供以下 API 接口：
+11. 提供以下 API 接口：
 
-* `GET /episodes`
-* `GET /episodes?task=pick_cube`
-* `GET /metrics`
-* `GET /tasks`
-* `GET /badcases`
+```text
+GET /episodes
+GET /episodes?task=pick_cube
+GET /metrics
+GET /tasks
+GET /badcases
+```
 
 ---
 
-## 4. 项目结构
+### v0.7 Storage Modeling Closing Version
+
+v0.7 是数据开发方向的收尾阶段，主要补充 MySQL 和 MongoDB 的存储建模理解。
+
+该版本不继续深入复杂后端系统、分布式系统或数据库性能优化，而是围绕岗位要求中的“熟悉 MySQL、MongoDB 等存储组件”进行轻量补充。
+
+已完成内容包括：
+
+1. SQLite 与 MySQL 对比说明；
+2. MySQL 版 `episodes` 表结构设计；
+3. MySQL 版 `INSERT`、`SELECT`、`WHERE`、`GROUP BY` 查询示例；
+4. Python 连接 MySQL 的模板代码；
+5. MongoDB 基础概念整理；
+6. MongoDB document / collection / database 概念说明；
+7. 使用 Python 字典模拟 MongoDB document；
+8. 使用 Python list 模拟 MongoDB collection；
+9. MongoDB 版 episode 元数据结构设计；
+10. Python 连接 MongoDB 的模板代码；
+11. 说明 MySQL 和 MongoDB 在机器人 / Agent episode 数据平台中的不同使用场景。
+
+v0.7 新增文件包括：
+
+```text
+storage_demos/mysql_schema.sql
+storage_demos/mysql_episode_queries.sql
+storage_demos/mysql_import_episodes.py
+storage_demos/mongodb_episode_document_demo.py
+storage_demos/mongodb_collection_query_demo.py
+storage_demos/mongodb_real_operation_template.py
+
+docs/mysql_sqlite_notes.md
+docs/mongodb_notes.md
+```
+
+---
+
+## 5. 项目结构
 
 ```text
 robot-data-eval-toolkit/
@@ -379,6 +405,14 @@ robot-data-eval-toolkit/
 │   ├── 13_import_csv_to_sqlite.py
 │   └── 14_query_badcases.py
 │
+├── storage_demos/
+│   ├── mysql_schema.sql
+│   ├── mysql_episode_queries.sql
+│   ├── mysql_import_episodes.py
+│   ├── mongodb_episode_document_demo.py
+│   ├── mongodb_collection_query_demo.py
+│   └── mongodb_real_operation_template.py
+│
 ├── results/
 │   ├── result.txt
 │   ├── csv_eval_report_v02.txt
@@ -398,7 +432,9 @@ robot-data-eval-toolkit/
 │   └── pandas_visualization.md
 │
 ├── docs/
-│   └── roadmap.md
+│   ├── roadmap.md
+│   ├── mysql_sqlite_notes.md
+│   └── mongodb_notes.md
 │
 ├── requirements.txt
 ├── .gitignore
@@ -410,19 +446,20 @@ robot-data-eval-toolkit/
 * `data/episodes.csv` 是早期 CSV 学习阶段使用的数据；
 * `data/episodes_sql_demo.csv` 是 SQLite 和 FastAPI 阶段使用的示例数据；
 * `data/robot_episodes.db` 是运行脚本后生成的 SQLite 数据库文件，建议通过 `.gitignore` 忽略，不上传 GitHub；
-* `scripts/` 保存各阶段学习脚本；
+* `scripts/` 保存各阶段 Python 学习脚本；
 * `app/main.py` 是 FastAPI 后端入口文件；
+* `storage_demos/` 保存 MySQL / MongoDB 存储建模与连接模板；
 * `results/` 保存报告和可视化结果；
 * `learning_notes/` 保存学习笔记；
-* `docs/` 保存路线规划文档。
+* `docs/` 保存路线规划和数据库学习文档。
 
 ---
 
-## 5. 如何运行
+## 6. 如何运行
 
-### 5.1 安装依赖
+### 6.1 安装基础依赖
 
-推荐使用当前项目对应的 Python 环境运行。当前本地使用方式为：
+推荐使用当前项目对应的 Python 环境运行。
 
 ```bash
 py -3.13 -m pip install -r requirements.txt
@@ -441,14 +478,15 @@ uvicorn
 说明：
 
 * `sqlite3` 是 Python 标准库，不需要写入 `requirements.txt`；
-* `csv`、`pathlib` 也是 Python 标准库，不需要额外安装。
+* `csv`、`pathlib` 也是 Python 标准库，不需要额外安装；
+* `pymysql`、`pymongo` 当前作为 MySQL / MongoDB 连接模板的可选依赖，不作为主项目必须依赖。
 
 ---
 
-### 5.2 运行 v0.1 基础统计脚本
+### 6.2 运行 v0.1 基础统计脚本
 
 ```bash
-python scripts/analyze_robot_data.py
+py -3.13 scripts/analyze_robot_data.py
 ```
 
 运行后查看：
@@ -459,10 +497,10 @@ results/result.txt
 
 ---
 
-### 5.3 运行 v0.2 CSV episode 评测脚本
+### 6.3 运行 v0.2 CSV episode 评测脚本
 
 ```bash
-python scripts/read_csv_basic.py
+py -3.13 scripts/read_csv_basic.py
 ```
 
 运行后查看：
@@ -473,10 +511,10 @@ results/csv_eval_report_v02.txt
 
 ---
 
-### 5.4 运行 v0.3 Pandas 评测脚本
+### 6.4 运行 v0.3 Pandas 评测脚本
 
 ```bash
-python scripts/pandas_eval_report.py
+py -3.13 scripts/pandas_eval_report.py
 ```
 
 运行后查看：
@@ -487,10 +525,10 @@ results/pandas_eval_report_v03.txt
 
 ---
 
-### 5.5 运行 v0.4 数据质量检测脚本
+### 6.5 运行 v0.4 数据质量检测脚本
 
 ```bash
-python scripts/pandas_quality_check.py
+py -3.13 scripts/pandas_quality_check.py
 ```
 
 运行后查看：
@@ -501,24 +539,21 @@ results/data_quality_report_v04.txt
 
 ---
 
-### 5.6 运行 v0.5 数据可视化脚本
+### 6.6 运行 v0.5 数据可视化脚本
 
 ```bash
-python scripts/pandas_visualization.py
+py -3.13 scripts/pandas_visualization.py
 ```
 
 运行后查看：
 
 ```text
-results/figures/task_episode_count_v05.png
-results/figures/reward_distribution_v05.png
-results/figures/task_success_rate_v05.png
-results/figures/task_average_reward_v05.png
+results/figures/
 ```
 
 ---
 
-### 5.7 运行 v0.6 SQLite + FastAPI 后端
+### 6.7 运行 v0.6 SQLite + FastAPI 后端
 
 #### 第一步：创建 SQLite 数据库表
 
@@ -558,13 +593,7 @@ data/episodes_sql_demo.csv
 py -3.13 -m uvicorn app.main:app --reload
 ```
 
-启动成功后，终端会显示：
-
-```text
-Uvicorn running on http://127.0.0.1:8000
-```
-
-然后可以访问：
+启动成功后，访问：
 
 ```text
 http://127.0.0.1:8000/docs
@@ -572,164 +601,38 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## 6. 示例输入
+### 6.8 查看 v0.7 存储建模文件
 
-### 6.1 v0.2-v0.5 使用的 CSV 示例
+MySQL / MongoDB 文件主要用于存储组件学习和建模说明，当前阶段不要求必须连接真实数据库服务。
 
-`data/episodes.csv` 示例：
-
-```csv
-episode_id,task,reward,success,steps
-1,pick_cube,8.5,1,42
-2,pick_cube,3.2,0,60
-3,open_drawer,7.1,1,55
-4,open_drawer,2.4,0,80
-5,push_button,9.0,1,35
-```
-
----
-
-### 6.2 v0.6 使用的 CSV 示例
-
-`data/episodes_sql_demo.csv` 示例：
-
-```csv
-episode_id,task,reward,success,steps,failure_reason
-1,pick_cube,8.5,1,42,
-2,pick_cube,3.2,0,60,grasp_failed
-3,pick_cube,7.8,1,45,
-4,pick_cube,2.5,0,70,object_slipped
-5,open_drawer,7.1,1,55,
-6,open_drawer,2.4,0,80,timeout
-```
-
----
-
-## 7. 示例输出
-
-### v0.1 示例输出
+可以查看：
 
 ```text
-Robot Episode Statistics
-Total Episodes: 5
-Success Count: 3
-Success Rate: 60.00%
+storage_demos/mysql_schema.sql
+storage_demos/mysql_episode_queries.sql
+storage_demos/mysql_import_episodes.py
+storage_demos/mongodb_episode_document_demo.py
+storage_demos/mongodb_collection_query_demo.py
+storage_demos/mongodb_real_operation_template.py
+```
 
-Reward Statistics
-Mean Reward: 26.00
-Max Reward: 40
-Min Reward: 15
-Sum Reward: 130
+其中，以下两个 Python 文件可以直接运行，用于理解 MongoDB 文档结构：
 
-Data Folder Statistics
-CSV Files: 1
-JSON Files: 1
-JPG Files: 1
-TXT Files: 1
-PY Files: 1
+```bash
+py -3.13 storage_demos/mongodb_episode_document_demo.py
+py -3.13 storage_demos/mongodb_collection_query_demo.py
+```
+
+以下文件是连接真实数据库的模板代码，如果本地未安装 MySQL / MongoDB，可先不运行：
+
+```text
+storage_demos/mysql_import_episodes.py
+storage_demos/mongodb_real_operation_template.py
 ```
 
 ---
 
-### v0.2 示例输出
-
-```text
-Robot Episode Evaluation Report
-===============================
-episode count: 5
-total reward: 30.2
-average reward: 6.04
-success count: 3
-success rate: 0.6
-average steps: 54.4
-```
-
----
-
-### v0.3 示例输出
-
-```text
-Pandas Robot Episode Evaluation Report v0.3
-================================================
-
-Overall Evaluation
-------------------------------------------------
-Total episode count: 5
-Average reward: 6.04
-Success rate: 0.6
-Average steps: 54.4
-
-Task-level Evaluation Report
-------------------------------------------------
-             episode_count  average_reward  success_rate  average_steps
-task
-open_drawer              2            4.75           0.5           67.5
-pick_cube                2            5.85           0.5           51.0
-push_button              1            9.00           1.0           35.0
-```
-
----
-
-### v0.4 示例输出
-
-```text
-Robot Episode Data Quality Report v0.4
-================================================
-
-Required Column Check
-------------------------------------------------
-All required columns exist.
-
-Missing Value Summary
-------------------------------------------------
-episode_id    0
-task          0
-reward        0
-success       0
-steps         0
-
-Reward Check Summary
-------------------------------------------------
-Reward valid range: [0, 100]
-Invalid reward count: 0
-Invalid reward rate: 0.0
-```
-
----
-
-### v0.5 示例输出
-
-v0.5 会自动生成 4 张图片：
-
-```text
-results/figures/task_episode_count_v05.png
-results/figures/reward_distribution_v05.png
-results/figures/task_success_rate_v05.png
-results/figures/task_average_reward_v05.png
-```
-
-终端输出示例：
-
-```text
-Task Episode Count
---------------------------------
-pick_cube      2
-open_drawer    2
-push_button    1
-
-Reward Summary
---------------------------------
-count    5.000000
-mean     6.040000
-min      2.400000
-max      9.000000
-
-All v0.5 figures have been generated successfully.
-```
-
----
-
-### v0.6 API 示例输出
+## 7. API 示例
 
 启动 FastAPI 后端后，可以访问：
 
@@ -747,7 +650,9 @@ http://127.0.0.1:8000/docs
 | `GET /tasks`                   | 按 task 分组统计指标        |
 | `GET /badcases`                | 查询失败 episode 数据      |
 
-#### GET /episodes
+---
+
+### GET /episodes
 
 访问：
 
@@ -774,17 +679,9 @@ http://127.0.0.1:8000/episodes
 }
 ```
 
-#### GET /episodes?task=pick_cube
+---
 
-访问：
-
-```text
-http://127.0.0.1:8000/episodes?task=pick_cube
-```
-
-返回 `task` 为 `pick_cube` 的 episode 数据。
-
-#### GET /metrics
+### GET /metrics
 
 访问：
 
@@ -803,7 +700,9 @@ http://127.0.0.1:8000/metrics
 }
 ```
 
-#### GET /tasks
+---
+
+### GET /tasks
 
 访问：
 
@@ -828,7 +727,9 @@ http://127.0.0.1:8000/tasks
 }
 ```
 
-#### GET /badcases
+---
+
+### GET /badcases
 
 当前 badcase 标准：
 
@@ -862,29 +763,119 @@ http://127.0.0.1:8000/badcases
 
 ---
 
-## 8. 与目标岗位的对应关系
+## 8. MySQL / MongoDB 建模说明
 
-| 岗位要求          | 当前项目体现                                                        |
-| ------------- | ------------------------------------------------------------- |
-| Python 基础     | 使用 Python 编写 episode 数据分析、质量检测、可视化和后端接口脚本                     |
-| NumPy 基础      | 使用 NumPy 计算 reward 基础统计指标                                     |
-| Pandas 基础     | 使用 Pandas 读取 CSV、统计指标、筛选异常数据、分组分析                             |
-| Matplotlib 基础 | 使用 Matplotlib 绘制柱状图和直方图                                       |
-| SQL / SQLite  | 使用 SQLite 建表、插入数据、查询数据、聚合统计和分组统计                              |
-| 数据存储          | 将机器人 episode CSV 数据导入 SQLite 数据库                              |
-| 数据查询          | 支持按 task 查询 episode、查询 badcase、查询整体指标                         |
-| 数据评测          | 计算 success rate、average reward、average steps                  |
-| 失败案例分析        | 筛选 `success = 0` 的失败 episode，并记录 failure_reason               |
-| 数据质量检测        | 检查缺失值、异常 reward、异常 steps、非法 success 标签                        |
-| 数据一致性检查       | 检查 episode_id 是否重复、是否连续                                       |
-| 可视化分析         | 绘制 task 数量、reward 分布、success rate、average reward 图            |
-| FastAPI 后端    | 使用 FastAPI 提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` 接口  |
-| 数据平台理解        | 模拟从 CSV 到数据库再到 API 查询的基础数据链路                                  |
-| 工程意识          | 区分 data、scripts、results、figures、learning_notes、docs、app 等项目目录 |
+### 8.1 MySQL 建模
+
+MySQL 适合保存结构化 episode 数据，例如：
+
+```text
+episode_id
+task
+reward
+success
+steps
+failure_reason
+```
+
+MySQL 版 `episodes` 表结构示例：
+
+```sql
+CREATE TABLE IF NOT EXISTS episodes (
+    episode_id INT PRIMARY KEY,
+    task VARCHAR(100),
+    reward DOUBLE,
+    success INT,
+    steps INT,
+    failure_reason VARCHAR(255)
+);
+```
+
+在机器人 / Agent episode 数据平台中，MySQL 可以用于保存：
+
+* episode 基础信息；
+* task 维度统计；
+* badcase 元数据；
+* 评测任务记录；
+* 数据版本信息。
 
 ---
 
-## 9. 当前学习进度
+### 8.2 MongoDB 建模
+
+MongoDB 适合保存结构更灵活的 episode 元数据，例如：
+
+```json
+{
+  "episode_id": 15,
+  "task": "lift_cube",
+  "reward": 2.9,
+  "success": 0,
+  "steps": 90,
+  "failure_reason": "object_dropped",
+  "metadata": {
+    "robot": "Panda",
+    "simulator": "robosuite",
+    "camera": "frontview"
+  },
+  "files": {
+    "trajectory": "data/trajectories/episode_15.mcap",
+    "rgb_video": "data/videos/episode_15_frontview.mp4",
+    "log": "data/logs/episode_15.json"
+  }
+}
+```
+
+在机器人 / Agent episode 数据平台中，MongoDB 可以用于保存：
+
+* episode 元数据；
+* 机器人配置；
+* 仿真环境信息；
+* 相机和传感器信息；
+* 轨迹文件路径；
+* 日志文件路径；
+* 失败样本描述；
+* 标注状态。
+
+---
+
+### 8.3 MySQL 与 MongoDB 的分工理解
+
+一种常见设计思路是：
+
+```text
+MySQL:
+保存规整的结构化数据，例如 episode_id、task、reward、success、steps。
+
+MongoDB:
+保存结构灵活的元数据，例如 robot、camera、simulator、file paths、logs。
+```
+
+二者可以通过 `episode_id` 关联。
+
+---
+
+## 9. 与目标岗位的对应关系
+
+| 岗位能力要求         | 当前项目体现                                                       |
+| -------------- | ------------------------------------------------------------ |
+| Python 基础      | 使用 Python 编写 episode 数据分析、质量检测、可视化和后端接口脚本                    |
+| NumPy / Pandas | 使用 NumPy / Pandas 完成指标统计、分组分析和异常筛选                           |
+| 数据质量分析         | 检查缺失值、异常 reward、异常 steps、非法 success 标签和重复 episode_id         |
+| SQL / SQLite   | 使用 SQLite 建表、插入数据、查询数据、聚合统计和分组统计                             |
+| MySQL 理解       | 设计 MySQL 版 episodes 表结构和查询语句，理解关系型数据库迁移方式                    |
+| MongoDB 理解     | 设计 episode 文档结构，理解 document / collection 和嵌套字段查询             |
+| 数据查询           | 支持按 task 查询 episode、查询 badcase、查询整体指标                        |
+| 数据评测           | 计算 success rate、average reward、average steps                 |
+| badcase 分析     | 筛选 `success = 0` 的失败 episode，并记录 failure_reason              |
+| 可视化分析          | 绘制 task 数量、reward 分布、success rate、average reward 图           |
+| FastAPI 后端     | 提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` 接口            |
+| 数据平台理解         | 模拟从 CSV 到数据库再到 API 查询的基础数据链路                                 |
+| AI Agent 评测迁移  | episode、steps、success、failure_reason、badcase 可迁移到 Agent 任务评测 |
+
+---
+
+## 10. 当前学习进度
 
 目前已经完成：
 
@@ -913,87 +904,74 @@ http://127.0.0.1:8000/badcases
 23. episode_id 重复检查；
 24. episode_id 连续性检查；
 25. task 数据量均衡检查；
-26. 自动生成 v0.4 数据质量检测报告；
-27. 使用 Matplotlib 绘制柱状图；
-28. 使用 Matplotlib 绘制直方图；
-29. 绘制 task episode 数量图；
-30. 绘制 reward 分布图；
-31. 绘制 task success rate 图；
-32. 绘制 task average reward 图；
-33. 使用函数组织可视化代码；
-34. 自动保存可视化结果到 `results/figures/`；
-35. SQLite 数据库基础；
-36. `CREATE TABLE` 创建 episodes 表；
-37. `INSERT INTO` 插入 episode 数据；
-38. `SELECT` 查询 episode 数据；
-39. `WHERE` 条件筛选；
-40. `COUNT`、`AVG` 聚合统计；
-41. `GROUP BY task` 分组统计；
-42. CSV 批量导入 SQLite；
-43. FastAPI 后端应用基础；
-44. `GET /episodes` 接口；
-45. `GET /metrics` 接口；
-46. `GET /tasks` 接口；
-47. `GET /badcases` 接口；
-48. 通过 `/docs` 查看 FastAPI 自动接口文档。
-
-当前项目已经从单纯的 Python 数据分析练习，升级为一个面向机器人 episode 数据的基础评测、数据质量检测、可视化分析和后端查询工具。
-
----
-
-## 10. 可用于简历的项目描述
-
-机器人 Episode 数据管理与评测后端工具
-基于 Python、Pandas、SQLite 和 FastAPI 构建机器人 episode 数据管理与评测后端原型，实现 CSV 数据读取、数据质量检测、SQLite 存储、SQL 指标查询、任务分组统计、badcase 检索和 FastAPI 接口封装；提供 `/episodes`、`/metrics`、`/tasks`、`/badcases` 等 API，用于模拟机器人数据平台中的基础数据处理链路。
+26. 自动生成数据质量检测报告；
+27. Matplotlib 基础可视化；
+28. task episode 数量图；
+29. reward 分布图；
+30. task success rate 图；
+31. task average reward 图；
+32. SQLite 数据库基础；
+33. `CREATE TABLE` 创建 episodes 表；
+34. `INSERT INTO` 插入 episode 数据；
+35. `SELECT` 查询 episode 数据；
+36. `WHERE` 条件筛选；
+37. `COUNT`、`AVG` 聚合统计；
+38. `GROUP BY task` 分组统计；
+39. CSV 批量导入 SQLite；
+40. FastAPI 后端应用基础；
+41. `GET /episodes` 接口；
+42. `GET /metrics` 接口；
+43. `GET /tasks` 接口；
+44. `GET /badcases` 接口；
+45. MySQL 与 SQLite 的区别；
+46. MySQL 版 episodes 表结构设计；
+47. MySQL 查询语句模板；
+48. Python 连接 MySQL 模板；
+49. MongoDB document / collection / database 基础；
+50. MongoDB episode 文档结构设计；
+51. Python 字典模拟 MongoDB document；
+52. Python 列表模拟 MongoDB collection；
+53. Python 连接 MongoDB 模板。
 
 ---
 
-## 11. 后续计划
+## 11. 可用于简历的项目描述
 
-这个项目会持续迭代，但后续会以实习岗位要求为边界，不做过度复杂的后端系统。
+### 机器人 / Agent Episode 数据管理与评测工具
 
-### v0.7 MySQL / MongoDB / Parquet / ROS bag / MCAP 基础了解
-
-后续计划补充不同数据存储与数据格式的基础理解：
-
-* SQLite 与 MySQL 的区别；
-* MongoDB 适合存储什么类型的数据；
-* CSV、JSON、Parquet 的区别；
-* ROS bag / MCAP 在机器人数据记录中的作用；
-* 为什么机器人数据平台需要不同类型的数据存储。
+基于 Python、Pandas、SQLite 和 FastAPI 构建机器人 episode 数据管理与评测后端原型，实现 CSV 数据读取、数据质量检测、SQLite 存储、SQL 指标查询、任务分组统计、badcase 检索和 FastAPI 接口封装；补充 MySQL / MongoDB 存储建模理解，设计关系型 episodes 表结构与文档型 episode 元数据结构，用于模拟机器人 / Agent 任务评测中的基础数据处理链路。
 
 ---
 
-### v0.8 数据平台基础概念
+## 12. 后续计划
 
-后续计划补充数据平台中的基础概念：
+当前项目的数据开发方向已经完成阶段性收尾，后续不继续深入复杂数据库工程、复杂后端系统或分布式系统实现。
 
-* 分区；
-* 副本；
-* 索引；
-* 压缩；
-* 一致性；
-* 数据查询效率；
-* 数据冷热分层的基础理解。
+后续主线将转向：
 
----
+```text
+AI Agent 评测 + 具身智能任务评测
+```
 
-### v0.9 Go 语言最小数据处理与 HTTP Demo
+计划继续补充：
 
-后续计划补充 Go 语言基础，只要求能完成：
-
-* 简单变量和结构体；
-* 读取 JSON / CSV 数据；
-* 简单 HTTP 服务；
-* 理解 Go 在后端服务中的基础作用。
+1. AI Agent 基础概念；
+2. Agent 任务轨迹与机器人 episode 的对应关系；
+3. Agent task、steps、tool_calls、success、failure_reason、badcase 数据结构；
+4. Agent Task Evaluation Demo；
+5. RAG、工具调用、多 Agent 协作的基础理解；
+6. 多模态与世界模型基础；
+7. 将当前项目升级为面向机器人 / Agent episode 的评测工具。
 
 ---
 
-## 12. 项目说明
+## 13. 项目说明
 
-当前项目是一个学习型项目，但结构按照长期维护的方向组织。
+当前项目是一个学习型项目，但按照长期维护的方向组织。
 
-项目从本地 CSV 数据分析开始，逐步扩展到 Pandas 数据分析、数据质量检测、可视化分析、SQLite 数据存储和 FastAPI 后端接口。通过持续迭代，本项目用于展示机器人数据开发实习岗位所需的基础能力：
+项目从本地 CSV 数据分析开始，逐步扩展到 Pandas 数据分析、数据质量检测、可视化分析、SQLite 数据存储、FastAPI 后端接口、MySQL / MongoDB 存储建模理解。
+
+通过持续迭代，本项目用于展示以下能力：
 
 * 数据读取；
 * 数据清洗；
@@ -1003,6 +981,9 @@ http://127.0.0.1:8000/badcases
 * 数据库存储；
 * SQL 查询；
 * 后端接口封装；
-* 数据闭环理解。
+* MySQL / MongoDB 存储建模理解；
+* badcase 检索；
+* 机器人 / Agent episode 评测理解；
+* 数据闭环意识。
 
-本项目后续将继续围绕机器人数据平台、数据处理链路和数据闭环方向进行轻量扩展。
+后续将围绕 AI Agent 评测、具身智能任务评测和多模态任务数据分析继续扩展。
